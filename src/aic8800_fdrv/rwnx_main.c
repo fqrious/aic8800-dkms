@@ -5113,6 +5113,9 @@ cfg80211_chandef_identical(const struct cfg80211_chan_def *chandef1,
 #endif
 
 static int rwnx_cfg80211_set_monitor_channel(struct wiphy *wiphy,
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 13, 0)
+                                            struct net_device *dev,
+#endif
                                              struct cfg80211_chan_def *chandef)
 {
     struct rwnx_hw *rwnx_hw = wiphy_priv(wiphy);
@@ -5120,10 +5123,14 @@ static int rwnx_cfg80211_set_monitor_channel(struct wiphy *wiphy,
     struct me_config_monitor_cfm cfm;
     RWNX_DBG(RWNX_FN_ENTRY_STR);
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 13, 0)
+    rwnx_vif = netdev_priv(dev);
+#else
     if (rwnx_hw->monitor_vif == RWNX_INVALID_VIF)
         return -EINVAL;
 
     rwnx_vif = rwnx_hw->vif_table[rwnx_hw->monitor_vif];
+#endif
 
     // Do nothing if monitor interface is already configured with the requested channel
     if (rwnx_chanctx_valid(rwnx_hw, rwnx_vif->ch_index)) {
@@ -5609,7 +5616,7 @@ static int rwnx_cfg80211_get_channel(struct wiphy *wiphy,
     if (rwnx_vif->vif_index == rwnx_hw->monitor_vif)
     {
         //retrieve channel from firmware
-        rwnx_cfg80211_set_monitor_channel(wiphy, NULL);
+        rwnx_cfg80211_set_monitor_channel(wiphy, wdev->netdev, NULL);
     }
 
     //Check if channel context is valid
@@ -9750,7 +9757,7 @@ static void __exit rwnx_mod_exit(void)
 
 module_init(rwnx_mod_init);
 module_exit(rwnx_mod_exit);
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0) && LINUX_VERSION_CODE < KERNEL_VERSION(6, 13, 0)
 MODULE_IMPORT_NS(VFS_internal_I_am_really_a_filesystem_and_am_NOT_a_driver);
 #endif
 MODULE_FIRMWARE(RWNX_CONFIG_FW_NAME);
