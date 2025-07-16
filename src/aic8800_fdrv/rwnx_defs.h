@@ -788,3 +788,10 @@ void rwnx_external_auth_enable(struct rwnx_vif *vif);
 void rwnx_external_auth_disable(struct rwnx_vif *vif);
 
 #endif /* _RWNX_DEFS_H_ */
+
+
+// del_timer_sync renamed to timer_delete_sync in v6.15
+#if (LINUX_VERSION_CODE > KERNEL_VERSION(6, 15, 0))
+#define del_timer_sync timer_delete_sync
+#define del_timer timer_delete
+#endif /* LINUX_VERSION_CODE  */
