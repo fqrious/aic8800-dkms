@@ -1698,8 +1698,10 @@ void reord_timeout_handler (struct timer_list *t)
 {
 #if LINUX_VERSION_CODE < KERNEL_VERSION(4,14,0)
 	struct reord_ctrl *preorder_ctrl = (struct reord_ctrl *)data;
-#else
+#elif LINUX_VERSION_CODE < KERNEL_VERSION(6,16,0)
 	struct reord_ctrl *preorder_ctrl = from_timer(preorder_ctrl, t, reord_timer);
+#else
+    struct reord_ctrl *preorder_ctrl = timer_container_of(preorder_ctrl, t, reord_timer);
 #endif
 
 	AICWFDBG(LOGTRACE, "%s Enter \r\n", __func__);
