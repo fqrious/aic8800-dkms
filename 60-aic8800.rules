@@ -1,0 +1,5 @@
+# udev rule for automatically ejecting massstorage device to enable wifi
+# To be place in /etc/udev/rules.d/
+
+# This example is for TPLink TX1U
+ACTION=="add", SUBSYSTEM=="block", ENV{DEVTYPE}=="disk", ATTRS{idVendor}=="a69c", ATTRS{idProduct}=="5721", RUN+="/usr/bin/eject /dev/%k"

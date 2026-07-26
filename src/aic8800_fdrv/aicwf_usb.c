@@ -2036,6 +2036,10 @@ static int aicwf_usb_chipmatch(struct aic_usb_dev *usb_dev, u16_l vid, u16_l pid
 		usb_dev->chipid = PRODUCT_ID_AIC8800DC;
 		AICWFDBG(LOGINFO, "%s USE AIC8800DC\r\n", __func__);
 		return 0;
+  }else if(pid == USB_PRODUCT_ID_AIC8800DC_TPLINK){
+		usb_dev->chipid = PRODUCT_ID_AIC8800DC;
+		AICWFDBG(LOGINFO, "%s USE AIC8800DC TPLINK\r\n", __func__);
+		return 0;
 	}else if(pid == USB_PRODUCT_ID_AIC8800DW || pid == USB_PRODUCT_ID_TENDA
 	 || pid == USB_PRODUCT_ID_TENDA_U2 || pid == USB_PRODUCT_ID_AIC8800FC){
         usb_dev->chipid = PRODUCT_ID_AIC8800DW;
@@ -2318,6 +2322,7 @@ static struct usb_device_id aicwf_usb_id_table[] = {
     {USB_DEVICE(USB_VENDOR_ID_AIC_V2, USB_PRODUCT_ID_AIC8800FC)},
     {USB_DEVICE(USB_VENDOR_ID_TENDA, USB_PRODUCT_ID_TENDA)},
     {USB_DEVICE(USB_VENDOR_ID_TENDA, USB_PRODUCT_ID_TENDA_U2)},
+    {USB_DEVICE(USB_VENDOR_ID_TP2, USB_PRODUCT_ID_AIC8800DC_TPLINK)},
 #endif
     {}
 };
