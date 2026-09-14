@@ -3641,7 +3641,11 @@ int rwnx_send_dbg_trigger_req(struct rwnx_hw *rwnx_hw, char *msg)
         return -ENOMEM;
 
     /* Set parameters for the MM_DBG_TRIGGER_REQ message */
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 3, 0)
     strscpy(req->error, msg, sizeof(req->error));
+#else
+    strncpy(req->error, msg, sizeof(req->error));
+#endif
 
     /* Send the MM_DBG_TRIGGER_REQ message to LMAC FW */
     return rwnx_send_msg(rwnx_hw, req, 0, -1, NULL);
