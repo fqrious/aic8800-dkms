@@ -2324,6 +2324,7 @@ static struct usb_device_id aicwf_usb_id_table[] = {
     {USB_DEVICE(USB_VENDOR_ID_TENDA, USB_PRODUCT_ID_TENDA_U2)},
     {USB_DEVICE(USB_VENDOR_ID_TP2, USB_PRODUCT_ID_AIC8800DC_TPLINK)},
 #endif
+    {USB_DEVICE(0x2604, 0x0013)},
     {}
 };
 
