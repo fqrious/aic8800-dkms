@@ -5477,7 +5477,11 @@ rwnx_cfg80211_remain_on_channel(struct wiphy *wiphy,
                             #if LINUX_VERSION_CODE < KERNEL_VERSION(3, 8, 0)
                                 enum nl80211_channel_type channel_type,
                             #endif
-                                unsigned int duration, u64 *cookie)
+                                unsigned int duration, u64 *cookie
+                            #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 0, 0)
+                                , const u8 *vht_mxd
+                            #endif
+                            )
 {
     struct rwnx_hw *rwnx_hw = wiphy_priv(wiphy);
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 6, 0)
@@ -5875,10 +5879,13 @@ static int rwnx_cfg80211_mgmt_tx(struct wiphy *wiphy, struct wireless_dev *wdev,
 		AICWFDBG(LOGINFO, "mgmt rx remain on chan\n");
 
         /* Start a ROC procedure for 30ms */
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 8, 0))
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 0, 0))
+        error = rwnx_cfg80211_remain_on_channel(wiphy, wdev, channel,
+                                                30, &cookie, NULL);
+#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 8, 0))
         error = rwnx_cfg80211_remain_on_channel(wiphy, wdev, channel,
                                                 30, &cookie);
-#elif (LINUX_VERSION_CODE < KERNEL_VERSION(3, 8, 0)) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 6, 0))
+#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 6, 0))
         error = rwnx_cfg80211_remain_on_channel(wiphy, wdev, channel, NL80211_CHAN_NO_HT,
                                                 30, &cookie);
 #else
@@ -9899,4 +9906,3 @@ MODULE_DESCRIPTION(RW_DRV_DESCRIPTION);
 MODULE_VERSION(RWNX_VERS_MOD);
 MODULE_AUTHOR(RW_DRV_COPYRIGHT " " RW_DRV_AUTHOR);
 MODULE_LICENSE("GPL");
-
