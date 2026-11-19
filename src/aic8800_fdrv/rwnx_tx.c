@@ -1614,7 +1614,8 @@ free:
  * @params: Mgmt frame parameters
  * @offchan: Indicate whether the frame must be send via the offchan TXQ.
  *           (is is redundant with params->offchan ?)
- * @cookie: updated with a unique value to identify the frame with upper layer
+ * @cookie: before 7.3: updated with a unique value to identify the frame with
+ *          upper layer. From 7.3: input, the cookie allocated by cfg80211
  *
  */
 
@@ -1687,7 +1688,9 @@ int rwnx_start_mgmt_xmit(struct rwnx_vif *vif, struct rwnx_sta *sta,
         return -ENOMEM;
     }
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(7, 3, 0)
     *cookie = (unsigned long)skb;
+#endif
 
     /*
      * Move skb->data pointer in order to reserve room for rwnx_txhdr
@@ -1757,6 +1760,9 @@ int rwnx_start_mgmt_xmit(struct rwnx_vif *vif, struct rwnx_sta *sta,
     sw_txhdr->rwnx_sta = sta;
     sw_txhdr->rwnx_vif = vif;
     sw_txhdr->skb = skb;
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(7, 3, 0)
+    sw_txhdr->mgmt_cookie = *cookie;
+#endif
     sw_txhdr->headroom = headroom;
     sw_txhdr->map_len = skb->len - offsetof(struct rwnx_txhdr, hw_hdr);
 #ifdef CONFIG_RWNX_AMSDUS_TX
@@ -2223,7 +2229,11 @@ int rwnx_txdatacfm(void *pthis, void *host_id)
 #endif
         /* Confirm transmission to CFG80211 */
         cfg80211_mgmt_tx_status(&sw_txhdr->rwnx_vif->wdev,
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(7, 3, 0)
+                                sw_txhdr->mgmt_cookie,
+#else
                                 (unsigned long)skb,
+#endif
                                 (skb->data + sw_txhdr->headroom),
                                 sw_txhdr->frame_len,
                                 rwnx_txst.acknowledged,

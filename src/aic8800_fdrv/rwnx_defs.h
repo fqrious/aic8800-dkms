@@ -655,7 +655,7 @@ struct rwnx_hw {
 #endif
     /* RoC Management */
     struct rwnx_roc_elem *roc_elem;             /* Information provided by cfg80211 in its remain on channel request */
-    u32 roc_cookie_cnt;                         /* Counter used to identify RoC request sent by cfg80211 */
+    u64 roc_cookie_cnt;                         /* Counter used to identify RoC request sent by cfg80211 */
 
     struct rwnx_cmd_mgr *cmd_mgr;
 

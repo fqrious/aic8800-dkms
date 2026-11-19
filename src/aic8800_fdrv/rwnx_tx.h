@@ -136,6 +136,10 @@ struct rwnx_sw_txhdr {
     u8 raw_frame;
     u8 fixed_rate;
     u16 rate_config;
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(7, 3, 0)
+    /* Cookie handed to us by cfg80211 for a mgmt_tx request, reported back in TX status */
+    u64 mgmt_cookie;
+#endif
 };
 
 /**
